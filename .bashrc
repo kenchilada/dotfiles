@@ -58,7 +58,7 @@ alias vboxmanage='VBoxManage --nologo'
 VIMVER=`vim --version|head -n 1| awk '{print $5}'|sed 's/\.//'`
 alias vess="/usr/share/vim/vim${VIMVER}/macros/less.sh"
 #export PAGER='vimpager'
-#alias less=$PAGER 
+#alias less=$PAGER
 
 # possibly colorize things
 #if [ "$TERM" != "dumb" ]; then
@@ -138,3 +138,6 @@ else
     enable exit
 fi
 
+beans() {
+	echo "I LOVE BEANS"
+}
