@@ -1,0 +1,13 @@
+# this file is to be sourced by .bash_profile
+
+alias vi=vim
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias ls='ls --color'
+alias ll='ls -lhA --color'
+alias tg=terragrunt
+alias ddrush='ddev drush'
+alias g=git
+
+alias dlogs='ddev logs -f --tail 200 |txts --color-always -n ddev_logs'
