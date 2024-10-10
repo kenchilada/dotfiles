@@ -1,32 +1,10 @@
-						#
 # vim: ft=conf:fdm=marker:tabstop=4
 #
-
 
 # USEFUL:
 # This will throw out trivial whitespace changes and apply to the cached copy:
 #
 # 	git diff -w --no-color | git apply --cached --ignore-whitespace
-#
-
-# --------------------------------------------
-# GIT CONCEPTS:
-# --------------------------------------------
-#
-# * Checkout Vs. Reset:
-# 		Checkout changes what your current branch is (i.e., it changes where
-# 		HEAD is pointing to). Reset changes which commit the current branch is
-# 		pointing to.
-#
-# * Rebase Vs. Merge:
-#		Rebasing is similar to merging, but your commits are migrated to the
-#		target branch as if those checkins occurred as new commits to its head.
-#		The commits are appended to the target branch, not tracked alongside it
-#		and merged back in.
-#
-#		The SHAs of the rebased commits will differ from the original commits.
-#		The original commits become "dangling commits", which can be viewed with
-#		reflog.
 #
 
 # --------------------------------------------
@@ -45,10 +23,9 @@
 #	of '-c' in the last step.
 #
 #	!! See git-reset(3) for more info on redoing commits in various scenarios.
-#   !! See git-revert(3) for revoking previous commits anywhere in history.
+#	!! See git-revert(3) for revoking previous commits anywhere in history.
 #
 # --------------------------------------------
-#
 # Submodules
 # --------------------------------------------
 # Add a submodule by specifying the repository url and the local path where the 
@@ -78,8 +55,9 @@
 
 
 [user]
-	# do not guess user.name and user.email, force to set for each repo
 	useConfigOnly = true
+	email = ken.stumpf@cditsolutions.com
+	name = Ken Stumpf
 
 [alias]
 	# Commit shortcut:
@@ -89,69 +67,74 @@
 	# Commit and use first argument as the commit message:
 	# 	$ git cim "added some stuff to the thing"
 	#
+	ci		= commit
+	cim		= commit -m
+
+	ap		= add --patch
+
 	# Alter the previous commit:
 	# 	$ git fix
 	#	$ git fix FILE1.txt FILE2.cs
 	#
-	ci		= commit
-	cim		= commit -m
 	fix		= commit --amend -C HEAD
 
-	# Checkout shortcuts:
-	# 	$ git co
-	# 	$ git co SomeBranch
-	#
-	# Create a new branch:
-	# 	$ git cob MyNewBranchName
-	#
+	unstage		= reset HEAD --
+
+	co		= checkout
+	cob		= checkout -b
+
 	# A "detached head" is a checkout where HEAD is pointed to a specific commit
 	# instead of a named branch.  You should NEVER commit to a detached head.
 	# 	$ git detach
 	#
-	co		= checkout
-	cob		= checkout -b
-	detach	= checkout --detach
+	detach		= checkout --detach
 
 	# Branching and Remotes:
 	b		= branch
 	bv		= !git branch --color -v | cut -c1-140
 	rv		= remote -v
 
+	cp		= cherry-pick
+	cl		= clone
+
+	# Show current commit:
+	current		= show --format="%h" --no-patch
+
+	# Tags:
+	retag           = !git tag -d $1 && git push origin :refs/tags/$1 && git tag $1 HEAD && git push origin $1 && true
+
 	# Various logging commands:
 	ps		= log --pretty=oneline origin..master
-	ll		= !"git log --pretty=oneline --abbrev-commit |more"
+	ll		= !"git log --pretty=oneline --abbrev-commit"
 	ls		= log --stat
 	lg		= log -g
-	graph	= log --graph --all --abbrev-commit --date=relative --pretty=format:'%C(yellow)%h%Creset - %Cgreen(%cr)%Creset %s%C(yellow)%d%Creset'
-	head	= !"git log -n1"
-	heads	= !"git log origin/master.. --format='%C(yellow)%h%Creset;%Cgreen%an%Creset;%H;%C(cyan)%f%Creset' | git name-rev --stdin --always --name-only | column -t -s';'"
+	graph		= log --graph --all --abbrev-commit --date=relative --pretty=format:'%C(yellow)%h%Creset - %Cgreen(%cr)%Creset %s%C(yellow)%d%Creset'
+	head		= !"git log -n1"
+	heads		= !"git log origin/master.. --format='%C(yellow)%h%Creset;%Cgreen%an%Creset;%H;%C(cyan)%f%Creset' | git name-rev --stdin --always --name-only | column -t -s';'"
+	bl		= for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
 
 	# Status shortcuts:
 	s		= status -sb -uno --ignore-submodules=untracked
 	st		= status
 	sa		= status -sb
-	stt	    = status --untracked-files=no
 
 	# Show differences between working repo and remote:
 	w		= whatchanged -p
 	wo		= whatchanged -p origin..
-	in		= !git-incoming
-	out		= !git-outgoing
+
+	out             = log --pretty=oneline --abbrev-commit --graph @{u}..
+	in              = !git fetch && git log --pretty=oneline --abbrev-commit --graph ..@{u}
 
 	# Helpers:
 	wip		= !"git add -A; git ls-files --deleted -z | xargs -0 git rm; git commit -m \"wip\""
-	unwip	= !"git log -n 1 | grep -q -c wip && git reset HEAD~1"
+	unwip		= !"git log -n 1 | grep -q -c wip && git reset HEAD~1"
 
 	# Rebase:
-	pullc	= pull --rebase
+	pullc		= pull --rebase
 	rb		= !"git wip;git rebase -i origin/master;git unwip"
 	pr		= !"git fetch;git wip;git rebase --stat origin;git unwip;git heads"
 
 	# Generating diffs and patches:
-	#
-	# Show a diff of staged commits:
-	# 	$ git diffc
-	# 	$ git diffc some/path/
 	#
 	# Produce a patch based on HEAD compared with two commits back in history:
 	# 	$ git fp HEAD^^
@@ -161,17 +144,10 @@
 	# 	$ git check path/to/some/file.txt
 	#
 	dif		= diff
-	diffc	= diff --cached
-	check	= diff --check
+	diffc		= diff --cached
+	dc		= diff --cached
+	check		= diff --check
 	fp		= format-patch --stdout
-
-	# Submodules:
-	#
-	subinit	= submodule init
-	subup	= submodule update
-	subadd	= submodule add
-	subsync = submodule sync
-	substat = submodule status
 
 	# Find dangling commits:
 	lost	= !"git fsck | awk '/dangling commit/ {print $3}' | git show --format='SHA1: %C(yellow)%h%Creset %f' --stdin | awk '/SHA1/ {sub(\"SHA1: \", \"\"); print}'"
@@ -187,16 +163,25 @@
 	# Show all aliases configured
 	alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\t=> \\2/' | sort
 	alias2	= config --get-regex alias.*
+	last = log -1 --stat
 
-	killremote = "!f(){ git branch -D \"$1\";  git push origin --delete \"$1\"; };f"
+	# run aggressive (but slower) gc
+	deepclean = gc --prune=now --aggressive
+
+	# write all untracked files to a zip file
+	backup-untracked = "!f() { bfn='backup-untracked-'$(uuidgen|tr -d '-'|sed 's/\\(.\\{8\\}\\).*/\\1/')'.zip'; git ls-files --others --exclude-standard -z | xargs -0 tar rvf ~/$bfn; echo \"Backed up untracked files to ~/$bfn\"; }; f"
 
 [core]
-	editor = vim
-	autocrlf = true 
-	#whitespace = space-before-tab, trailing-space
-	whitespace = cr-at-eol
+	autocrlf = false
+	whitespace = space-before-tab, trailing-space
 	filemode = false
-	#excludesfile = \\\\Dev-AD\\Users\\Ken\\Documents\\gitignore_global.txt
+	trustctime = false
+
+	# https://github.com/dandavison/delta
+	#pager = delta
+
+	# gets rid of ^M in regular diff output
+	#pager = tr -d '\\r' | less -REX
 
 # Set environment GIT_CURL_VERBOSE=1 to debug http/https transactions.  If git
 # complains that it cannot verify an SSL certificate, you can disable the check
@@ -205,14 +190,87 @@
 # Use http.sslCAinfo to provide a path to your cert info.  This will not perform
 # shell expansion, so you may want to use GIT_SSL_CAINFO to set this instead.
 #
-#[http]
-#	sslCAinfo = ~/certs/cacert.pem
+[http]
+	sslCAinfo = ~/certs/cacert.pem
+
+[merge]
+	tool = beyond
+	keepBackup = false
+	conflictstyle = diff3
+
+[push]
+	default = matching
+[credential]
+	helper = store
+	#helper = cache --timeout=3600
+[mergetool]
+	keeptemporaries = false
+	keepbackups = false
+	prompt = false
+	trustexitcode = false
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[help]
+	# leave at 0 to show suggestions but not auto-execute them
+	autocorrect = 0
+
+# https://github.com/dandavison/delta
+[delta]
+	dark = true
+
+	# themes dont seem to work?? :(
+	#-theme = woolly-mammoth
+	#syntax-theme = 1337
+
+	side-by-side = true
+	line-numbers = true
+
+	max-line-length = 700
+	max-line-distance = 0.3
+	hunk-header-decoration-style = blue
+	hunk-header-line-number-style = purple bold
+
+	navigate = true    # use n and N to move between diff sections
+	hyperlinks = false   # not good for terminal
+	whitespace-error-style = 22 reverse
+	feature = decorations
+
+[delta "decorations"]
+    file-style = bold yellow ul
+	file-decoration-style = yellow ol ul
+
+	#commit-decoration-style = bold yellow box ul
+    commit-decoration-style = blue ol
+    #commit-style = raw
+
+	# hunks are shown under each file
+    hunk-header-decoration-style = blue box
+    hunk-header-file-style = "#00d0e0"
+    hunk-header-line-number-style = "#067a00"
+    hunk-header-style = file line-number syntax
+
+[diff]
+	# Show blocks of moved text of at least 20 alphanumeric characters differently than adds/deletes
+	# https://blog.github.com/2018-04-05-git-217-released/
+	colorMoved = default
+
+	# Detect copies in addition to renames
+	renames = copies
+
+[interactive]
+	diffFilter = delta --color-only --features=interactive
+
+[log]
+	date = human
 
 [color]
 	ui = auto
-	diff = auto
-	branch = auto
-	status = auto
+	#diff = auto
+	#branch = auto
+	#status = auto
 
 [color "diff"]
 	meta = blue bold
@@ -231,56 +289,5 @@
 	changed = magenta
 	untracked = red
 
-
-[difftool "kdiff3"]
-	cmd = "\"c:/program files/kdiff3/kdiff3.exe\" \"$(cygpath -w $BASE)\" \"$(cygpath -w $LOCAL)\" \"$(cygpath -w $REMOTE)\" \"$(cygpath -w $MERGED)\""
-	#cmd = "\"c:/program files (x86)/beyond compare 4/bcomp.exe\" \"$(cygpath -w $LOCAL)\" \"$(cygpath -w $REMOTE)\""
-    trustExitCode = false
-[difftool]
-    prompt = false
-[diff]
-    tool = kdiff3
-[mergetool "kdiff3"]
-	cmd = "\"c:/program files/kdiff3/kdiff3.exe\" \"$(cygpath -w $BASE)\" \"$(cygpath -w $LOCAL)\" \"$(cygpath -w $REMOTE)\" \"$(cygpath -w $MERGED)\""
-    trustExitCode = false
-[mergetool]
-    keepBackup = false
-[merge]
-    tool = kdiff3
-
-#[diff]
-#	tool = beyond
-#[difftool "beyond"]
-#	#cmd = "git-diff-wrapper \"$LOCAL\" \"$REMOTE\""
-#	cmd = "\"c:/program files (x86)/beyond compare 4/bcomp.exe\" \"$(cygpath -w $LOCAL)\" \"$(cygpath -w $REMOTE)\""
-#	#cmd = "\"c:/program files (x86)/beyond compare 3/bcomp.exe\"" "$(cygpath -w $REMOTE)" "$LOCAL"
-#[difftool "bc"]
-#	path = c:/program files/beyond compare 4/bcomp.exe
-#[difftool]
-#	tool = bc
-#	prompt = false
-#
-#[merge]
-#	tool = beyond
-#	keepBackup = false
-#[mergetool "bc3"]
-#	path = c:/program files (x86)/beyond compare 3/bcomp.exe
-#[mergetool "beyond"]
-#	cmd = \"c:/program files/beyond compare 4/bcomp.exe\" \"$PWD/$LOCAL\" \"$PWD/$REMOTE\" \"$PWD/$BASE\" \"$PWD/$MERGED\"
-	#cmd = "c:/program files (x86)/beyond compare 3/bcomp.exe" "$(cygpath -w $REMOTE)" "$(cygpath -w $LOCAL)"
-	#cmd = "git-diff-wrapper \"$LOCAL\" \"$REMOTE\""
-	#cmd = "\"c:\/program files (x86)/beyond compare 3/bcomp.exe\" \$REMOTE \$LOCAL "
-#	cmd = "~/bin/git-diff-wrapper.sh $LOCAL $REMOTE"
-	#trustExitCode = true
-#
-#
-
-[credential "https://cdit.kilnhg.com"]
-	username = ken.stumpf@cditsolutions.com
-	helper = cache --timeout 1800
-
-
-
-[gui]
-	recentrepo = F:/Devel/rispc-again.git
-
+[safe]
+	directory = *
