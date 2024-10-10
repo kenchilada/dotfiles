@@ -4,13 +4,22 @@
 # non-login shells, put them in .bashrc instead of here.
 #
 
-## pull in aliases and functions
-if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
+for file in ~/.{extra,bash_prompt,exports,aliases,functions};
+do
+	[ -r "$file" ] && source "$file"
+done
+unset file
+
+# here's LS_COLORS
+# github.com/trapd00r/LS_COLORS
+#command -v gdircolors >/dev/null 2>&1 || alias gdircolors="dircolors"
+#if which gdircolors > /dev/null; then
+if which dircolors > /dev/null; then
+	eval "$(dircolors -b ~/.dircolors)"
 fi
 
 ## user specific environment and startup programs
-export PATH=$HOME/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 export PERL5LIB=~/perllib/lib/perl5/site_perl/5.8.8
 
 # require two ^D sequences to logout instead of one
@@ -19,30 +28,51 @@ export IGNOREEOF=1
 # enable this to use screen by default upon logon
 #exec screen -RR
 
-#export GIT_SSL_CAINFO="${HOME}/certs/cacert.pem"
+export GIT_SSL_CAINFO="${HOME}/certs/cacert.pem"
 
-## only ask for my SSH key passphrase once!
-#use existing ssh-agent if possible
-if [ -f ${HOME}/.ssh-agent ]; then
-   . ${HOME}/.ssh-agent > /dev/null
+# start ssh-agent
+SSHAGENT=/usr/bin/ssh-agent
+SSHAGENTARGS="-s"
+if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+	eval `$SSHAGENT $SSHAGENTARGS`
+	trap "kill $SSH_AGENT_PID" 0
 fi
-if [ -z "$SSH_AGENT_PID" -o -z "`/usr/bin/ps -a|/usr/bin/egrep \"^[ ]+$SSH_AGENT_PID\"`" ]; then
-   /usr/bin/ssh-agent > ${HOME}/.ssh-agent
-   . ${HOME}/.ssh-agent > /dev/null
-fi
-[ -z "$SSH_AGENT_PID" ] && ssh-add ~/.ssh/id_rsa
 
-# todo@ken: could use below if we had a way to detect if we are running in mintty
-## ssh-pageant
-# nice for mintty.exe, authenticate against pageant.exe
-# 
-# https://github.com/cuviper/ssh-pageant
-#
-#SOCKDIR=$(cygpath ${LOCALAPPDATA})
-#echo sockdir is $SOCKDIR
-#if [ -d ${SOCKDIR} ]; then
-#	echo found sockdir
-#	eval $(/usr/bin/ssh-pageant -r -a "${SOCKDIR}/ssh-pageant-$USERNAME.sock")
-#fi
+export LESSHISTFILE="/dev/null"
 
+# use vi-style movement keys in shell
+set -o vi
+
+export EDITOR="vim"
+
+### external
+export TERRAGRUNT_AUTO_INIT=false
+export COMPOSER_NO_AUDIT=1
+export TERMINUS_HIDE_GIT_MODE_WARNING=1
+
+# NVM config
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
+export PATH="$PATH:/home/$USER/.dotnet/"
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob;
+
+# Correct spelling errors in arguments supplied to cd
+shopt -s cdspell;
+
+# Autocorrect on directory names to match a glob.
+shopt -s dirspell 2> /dev/null
+
+# Turn on recursive globbing (enables ** to recurse all directories)
+shopt -s globstar 2> /dev/null
+
+# Enable tab completion for `g` by marking it as an alias for `git`
+if type __git_complete &> /dev/null; then
+    __git_complete g __git_main
+fi;
 
