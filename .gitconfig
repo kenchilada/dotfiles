@@ -183,15 +183,20 @@
 	# gets rid of ^M in regular diff output
 	#pager = tr -d '\\r' | less -REX
 
-# Set environment GIT_CURL_VERBOSE=1 to debug http/https transactions.  If git
-# complains that it cannot verify an SSL certificate, you can disable the check
-# with GIT_SSL_NO_VERIFY=1.
-#
-# Use http.sslCAinfo to provide a path to your cert info.  This will not perform
-# shell expansion, so you may want to use GIT_SSL_CAINFO to set this instead.
-#
 [http]
-	sslCAinfo = ~/certs/cacert.pem
+	# For error "Problem with the SSL CA cert" you can run git with GIT_CURL_VERBOSE=1
+	# and GIT_TRACE_CURL=1 to see why its failing.
+	#
+	# If git complains that it cannot verify an SSL certificate, you can disable the 
+	# check with GIT_SSL_NO_VERIFY=1 or 'http.sslVerify=false', but that is bad.
+	#
+	# Use 'http.sslCAinfo' to provide a path to your cert info.  This will not perform
+	# shell expansion, so you may want to use GIT_SSL_CAINFO to set this instead. 
+	#
+	# Note: it seems that GIT_SSL_CAINFO will override 'http.sslCAinfo'
+
+	#sslCAinfo = ~/certs/ca-bundle.crt
+	sslVerify = true
 
 [merge]
 	tool = beyond

@@ -28,7 +28,8 @@ export IGNOREEOF=1
 # enable this to use screen by default upon logon
 #exec screen -RR
 
-export GIT_SSL_CAINFO="${HOME}/certs/cacert.pem"
+# see .gitconfig 'http.sslCAinfo' for notes on this
+export GIT_SSL_CAINFO="${HOME}/certs/ca-bundle.crt"
 
 # start ssh-agent
 SSHAGENT=/usr/bin/ssh-agent
