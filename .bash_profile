@@ -57,8 +57,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Load Angular CLI autocompletion.
-source <(ng completion script)
-export PATH="$PATH:/home/$USER/.dotnet/"
+if command -v ng 2>&1 >/dev/null
+then
+	source <(ng completion script)
+fi
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
