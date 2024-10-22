@@ -4,6 +4,9 @@
 # non-login shells, put them in .bashrc instead of here.
 #
 
+# capture subshell depth (do this before PS1)
+SSDEPTH=$(($(pstree -s $$ | sed -r 's/-+/\n/g' | grep -Ec '\<(bash|zsh|sh|dash|ksh|csh|tcsh)\>') - 1))
+
 for file in ~/.{extra,bash_prompt,exports,aliases,functions};
 do
 	[ -r "$file" ] && source "$file"
@@ -13,7 +16,6 @@ unset file
 # here's LS_COLORS
 # github.com/trapd00r/LS_COLORS
 #command -v gdircolors >/dev/null 2>&1 || alias gdircolors="dircolors"
-#if which gdircolors > /dev/null; then
 if which dircolors > /dev/null; then
 	eval "$(dircolors -b ~/.dircolors)"
 fi
@@ -78,4 +80,7 @@ shopt -s globstar 2> /dev/null
 if type __git_complete &> /dev/null; then
     __git_complete g __git_main
 fi;
+
+# for fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 

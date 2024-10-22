@@ -1,5 +1,8 @@
 
-#NOCOLOR="\[\033[0m\]"
+# call this to dump color table for codes to use with XCOLOR
+function print_colors { for colour in {1..225}; do echo -en "\033[38;5;${colour}m ${colour}:abcwyz \n"; done | column -x; }
+
+NOCOLOR="\[\033[0m\]"
 #LIGHT_WHITE="\[\033[1;37m\]"
 #WHITE="\[\033[0;37m\]"
 #GRAY="\[\033[1;30m\]"
@@ -20,10 +23,11 @@
 
 function XCOLOR () { echo -ne "\[\033[38;5;$1m\]"; }
 
-#export PS1="\[[\e[36;1m\]\u@\h \[\e[34m\]\t\[\e[0m\] \[\e[33m\]\W\[\e[0m\]](${LSHLVL})$ \[\e[0m\]"
-
 # set a fancy prompt
-#export PS1="`EXT_COLOR 172`[\u@\h \W]\$${NO_COLOUR} "
-PS1="[`XCOLOR 172`\u@\h `XCOLOR 39`\t${NOCOLOR} `XCOLOR 220`\W${NOCOLOR}](${LSHLVL})$ ${NOCOLOR}"
+PS1="[`XCOLOR 172`\u@\h `XCOLOR 39`\t${NOCOLOR} `XCOLOR 220`\W${NOCOLOR}]$ ${NOCOLOR}"
+
+# SSDEPTH is subshell depth count, set in .bash_profile
+if (( SSDEPTH > 1 )); then PS1="`XCOLOR 42`[${SSDEPTH}]${NOCOLOR}$PS1"; fi
+
 export PS1
 
