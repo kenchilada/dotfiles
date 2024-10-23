@@ -847,6 +847,8 @@ call plug#begin('~/.vim/plugged')
     "Plug 'airblade/vim-gitgutter'
 	Plug 'vim-airline/vim-airline'				 " enhanced status line
 	Plug 'ryanoasis/vim-devicons'				 " adds file icons to nerdtree and others
+
+	Plug 'mileszs/ack.vim'
 call plug#end()
 "}}}
 
