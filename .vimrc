@@ -1,7 +1,7 @@
 " vim: fdm=marker:fen:fdn=3:foldcolumn=3
 "
 " !! Things broken? Try :PlugInstall
-" !! Things ugly? Select a powerline font for your terminal
+" !! Things ugly? Select a "nerd font" for your terminal (https://github.com/ryanoasis/nerd-fonts?tab=readme-ov-file#font-installation)
 "
 " Help Help:
 " :help {subject}
@@ -363,7 +363,7 @@ set helpheight=9999 				" minimum height in lines of a help window
 " use the mouse in vim; works in some terminals; supports wheel scrolling, text
 " selection, and (if x-server is available) copy selection to system clipboard
 if has("mouse")
-	set mouse=a
+	set mouse=r
 
 	" copy selection to clipboard when mouse is released
 	"noremap <LeftRelease> "+y<LeftRelease>
@@ -825,6 +825,9 @@ call plug#begin('~/.vim/plugged')
 	"Plug 'neomake/neomake'
 	"call neomake#configure#automake('nrwi', 500)
 
+	" adds :SudoWrite :SudoEdit :Chmod :Mkdir
+	Plug 'tpope/vim-eunuch'
+
 	" adds :Ack, :Lack, :Back, :Quack
 	let g:FerretMap = 0
 	Plug 'wincent/ferret'
@@ -850,7 +853,8 @@ call plug#end()
 "
 "NERDTree settings
 	" automatically open nerdtree on vim start
-	autocmd vimenter * NERDTree
+	autocmd vimenter * NERDTree | wincmd p
+
 	let g:NERDTreeMouseMode = 2
 	let NERDTreeMinimalUI = 1
 "
@@ -882,6 +886,8 @@ nnoremap <leader>f :Files<cr>
 nnoremap <leader>F :NERDTreeToggle<cr>
 nnoremap <leader>rm :Gremove<cr>
 nnoremap <leader>t :TagbarToggle<cr>
+nnoremap <leader>se :SudoEdit<space>
+nnoremap <leader>sw :SudoWrite<cr>
 
 set tags+=.git/tags
 
