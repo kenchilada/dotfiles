@@ -382,7 +382,7 @@ endif
 set viminfo='100,f1,:100,@100,/20
 
 " list of places to try to store swapfiles
-set directory=$HOME/.vim-tmp,$HOME/tmp,.
+set directory=$HOME/.vim/swap,$HOME/.vim-tmp,$HOME/tmp,.
 set swapfile
 
 set backup
