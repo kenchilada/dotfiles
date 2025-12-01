@@ -84,3 +84,5 @@ fi;
 # for fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# TrueNAS SCALE – kill huge LS_COLORS when sudoing (MUST be absolute last)
+[[ -x /usr/bin/midclt && -n "$SUDO_COMMAND" ]] && unset LS_COLORS
